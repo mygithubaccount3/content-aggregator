@@ -1,0 +1,62 @@
+{% extends 'conag/base.html' %} {% block content %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for article in page_obj %}
+  <div class="col">
+    <div class="card">
+      <!-- <img src="..." class="card-img-top" alt="..."> -->
+      <div class="card-body">
+        <h5 class="card-title">{{ article.title }}</h5>
+        <p class="card-text">{{ article.summary }}</p>
+      </div>
+      {% if article.time or article.tag %}
+      <div
+        class="card-footer"
+        style="display: flex; justify-content: space-between"
+      >
+        <small style="color: #5a5a5a">{{ article.time }}</small>
+        <small style="color: #387b12">{{ article.tag }}</small>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <!-- <a
+    href="#"
+    class="list-group-item list-group-item-action"
+    aria-current="true"
+  >
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">{{ item.title }}</h5>
+      <small style="color: #5a5a5a;">{{ item.time }}</small>
+    </div>
+    <p class="mb-1">{{ item.summary }}</p>
+    <small style="color: #387b12;">{{ item.tag }}</small>
+  </a> -->
+  {% endfor %}
+</div>
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% endif %}
+    {% for page in page_obj.paginator.page_range %}
+      {% if page == page_obj.number %}
+        <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+<hr />
+{% endblock %}
