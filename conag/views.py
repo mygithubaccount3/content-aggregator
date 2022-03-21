@@ -84,5 +84,6 @@ def cnn(request):
             'span', class_='cd__headline-text').get_text())
 
     # browser.close()
+    # driver.quit()
 
     return render(request, 'conag/index.html', {'articles': articles})
