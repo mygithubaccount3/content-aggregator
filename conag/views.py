@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 
 
 def get_bs4_instance(html_document: str, parser: str) -> BeautifulSoup:
@@ -67,7 +68,8 @@ def cnn(request):
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
 
-    browser = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=chrome_options)
+    browser = webdriver.Chrome(service=Service(executable_path=os.environ.get("CHROMEDRIVER_PATH")), options=chrome_options)
+    
     browser.set_window_size(950, 800)
 
     browser.get("https://edition.cnn.com/health")
