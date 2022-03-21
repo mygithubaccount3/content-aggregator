@@ -63,16 +63,16 @@ def bbc(request, page=1):
 def cnn(request):
     articles = []
     service = Service(executable_path=ChromeDriverManager().install())
-    chrome_options = webdriver.ChromeOptions()
-    # chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
+    # chrome_options = webdriver.ChromeOptions()
+    # # chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+    # chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--disable-gpu')
+    # chrome_options.add_argument('--no-sandbox')
+    # chrome_options.add_argument('--disable-dev-shm-usage')
 
-    browser = webdriver.Chrome(service=service, options=chrome_options)
+    browser = webdriver.Chrome(service=service)
     
-    browser.set_window_size(950, 800)
+    # browser.set_window_size(950, 800)
 
     browser.get("https://edition.cnn.com/health")
     html = browser.page_source
