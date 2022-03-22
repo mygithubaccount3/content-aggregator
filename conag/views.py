@@ -18,6 +18,8 @@ def bbc(request, page=1):
     if request.GET.get('page') or page:
         articles = []
         page_obj = {}
+        query = request.GET.get('search')
+        is_query_empty = query is None or len(query) == 0
         soup = get_bs4_instance('https://bbc.com/sport', 'lxml')
         sport_news_html_tags = soup.select('.gs-c-promo-body')
         del sport_news_html_tags[-25:]
@@ -29,34 +31,39 @@ def bbc(request, page=1):
                 'tag': '',
                 'time': ''
             }
+            article_title_tag = tag.select_one('.gs-c-promo-heading__title')
+            article_summary_tag = tag.select_one('.gs-c-promo-summary')
+            article_tag_tag = tag.select_one('.qa-section-tag a')
+            article_time_tag = tag.select_one('.gs-u-vh')
 
-            if tag.select_one('.gs-c-promo-heading__title') is not None:
-                article.update(title=tag.select_one(
-                    '.gs-c-promo-heading__title').get_text())
+            if article_title_tag is not None:
+                if ((not is_query_empty and query in article_title_tag.get_text()) or
+                        (is_query_empty)):
+                    article.update(title=article_title_tag.get_text())
+                else:
+                    continue
             else:
                 continue
 
-            if tag.select_one('.gs-c-promo-summary') is not None:
-                article.update(summary=tag.select_one(
-                    '.gs-c-promo-summary').get_text())
+            if article_summary_tag is not None:
+                if ((not is_query_empty and query in article_summary_tag.get_text()) or
+                        (is_query_empty)):
+                    article.update(summary=article_summary_tag.get_text())
 
-            if tag.select_one('.qa-section-tag a') is not None:
-                article.update(tag=tag.select_one(
-                    '.qa-section-tag a').get_text())
+            if article_tag_tag is not None:
+                article.update(tag=article_tag_tag.get_text())
 
-            if tag.select_one('.gs-u-vh') is not None and 'ago' in tag.select_one('.gs-u-vh').get_text():
-                article.update(time=tag.select_one('.gs-u-vh').get_text())
+            if article_time_tag is not None and 'ago' in article_time_tag.get_text():
+                article.update(time=article_time_tag.get_text())
 
             articles.append(article)
-            paginator = Paginator(articles, 10)
-            page_number = request.GET.get('page') or page
-            page_obj = paginator.get_page(page_number)
 
-        # print(titles)
+        paginator = Paginator(articles, 10)
+        page_number = request.GET.get('page') or page
+        page_obj = paginator.get_page(page_number)
 
         return render(request, 'conag/index.html', {'page_obj': page_obj})
     else:
-        # return redirect('/conag/bbc?page=1', permanent=True)
         return redirect('conag:bbc', permanent=True, page=1)
 
 
@@ -71,7 +78,7 @@ def cnn(request):
     # chrome_options.add_argument('--disable-dev-shm-usage')
 
     browser = webdriver.Chrome(service=service)
-    
+
     # browser.set_window_size(950, 800)
 
     browser.get("https://edition.cnn.com/health")
