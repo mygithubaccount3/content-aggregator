@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from .forms import SearchForm
 
 
 def get_bs4_instance(html_document: str, parser: str) -> BeautifulSoup:
@@ -18,8 +19,9 @@ def bbc(request, page=1):
     if request.GET.get('page') or page:
         articles = []
         page_obj = {}
-        query = request.GET.get('search')
-        is_query_empty = query is None or len(query) == 0
+        form = SearchForm(request.GET)
+        is_form_valid = form.is_valid()
+        cleaned_query = form.cleaned_data.get('query')
         soup = get_bs4_instance('https://bbc.com/sport', 'lxml')
         sport_news_html_tags = soup.select('.gs-c-promo-body')
         del sport_news_html_tags[-25:]
@@ -37,8 +39,7 @@ def bbc(request, page=1):
             article_time_tag = tag.select_one('.gs-u-vh')
 
             if article_title_tag is not None:
-                if ((not is_query_empty and query in article_title_tag.get_text()) or
-                        (is_query_empty)):
+                if ((is_form_valid and cleaned_query in article_title_tag.get_text())):
                     article.update(title=article_title_tag.get_text())
                 else:
                     continue
@@ -46,8 +47,7 @@ def bbc(request, page=1):
                 continue
 
             if article_summary_tag is not None:
-                if ((not is_query_empty and query in article_summary_tag.get_text()) or
-                        (is_query_empty)):
+                if ((cleaned_query in article_summary_tag.get_text())):
                     article.update(summary=article_summary_tag.get_text())
 
             if article_tag_tag is not None:
@@ -59,10 +59,10 @@ def bbc(request, page=1):
             articles.append(article)
 
         paginator = Paginator(articles, 10)
-        page_number = request.GET.get('page') or page
+        page_number = request.GET.get('page') or page #escape GET
         page_obj = paginator.get_page(page_number)
 
-        return render(request, 'conag/index.html', {'page_obj': page_obj})
+        return render(request, 'conag/index.html', {'page_obj': page_obj, 'form': form})
     else:
         return redirect('conag:bbc', permanent=True, page=1)
 
