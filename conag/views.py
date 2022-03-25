@@ -78,7 +78,6 @@ def cnn(request):
     # chrome_options.add_argument('--disable-dev-shm-usage')
 
     browser = webdriver.Chrome(service=service)
-
     # browser.set_window_size(950, 800)
 
     browser.get("https://edition.cnn.com/health")
