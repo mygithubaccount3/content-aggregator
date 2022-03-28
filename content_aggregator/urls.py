@@ -18,5 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('conag', include('conag.urls', namespace='conag'))
+    path('', include('conag.urls', namespace='conag'))
 ]
