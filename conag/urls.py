@@ -1,10 +1,10 @@
 from django.urls import path
-from . import views
+from .views import BbcView, CnnView, IndexView
 
 app_name = 'conag'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('bbc', views.bbc, name='bbc'),
-    path('cnn', views.cnn, name='cnn')
+    path('', IndexView.as_view(), name='index'),
+    path('bbc', BbcView.as_view(), name='bbc'),
+    path('cnn', CnnView.as_view(), name='cnn')
 ]
