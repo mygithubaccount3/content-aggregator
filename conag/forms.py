@@ -7,23 +7,33 @@ class SearchForm(forms.Form):
 
     page = forms.IntegerField(max_value=50, min_value=1, required=False)
 
-    def search(self, sport_news_html_tags):
+    def search(self, html_tags, source):
         articles = []
 
-        for tag in sport_news_html_tags:
+        for tag in html_tags:
             article = {
                 'title': '',
                 'summary': '',
                 'tag': '',
                 'time': ''
             }
-            article_title_tag = tag.select_one(
-                '.gs-c-promo-heading__title')
-            article_summary_tag = tag.select_one('.gs-c-promo-summary')
-            article_tag_tag = tag.select_one('.qa-section-tag a')
-            article_time_tag = tag.select_one('.gs-u-vh')
 
-            
+            article_title_tag = None
+            article_summary_tag = None
+            article_tag_tag = None
+            article_time_tag = None
+
+            if source == 'bbc':
+                article_title_tag = tag.select_one('div > div > a')
+                article_summary_tag = tag.select_one('div > div > p')
+                article_tag_tag = tag.select_one(
+                    'div > div:last-of-type > div > dl > div:nth-of-type(2) > dd')
+                article_time_tag = tag.select_one(
+                    'div > div:last-of-type > div > dl > div:first-of-type > dd > span > span:nth-of-type(2)')
+            elif source == 'cnn':
+                article_title_tag = tag.select_one(
+                    'article span:first-of-type')
+
             if article_title_tag is not None:
                 if ((self.cleaned_data.get('query') in article_title_tag.get_text())):
                     article.update(title=article_title_tag.get_text())

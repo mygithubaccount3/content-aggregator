@@ -1,8 +1,8 @@
 {% extends 'conag/base.html' %}
 {% block content %}
-  {% if page_obj|length > 0 %}
+  {% if articles|length > 0 %}
     <div class="row row-cols-1 row-cols-md-3 g-4">
-      {% for article in page_obj %}
+      {% for article in articles %}
         <div class="col">
           <div class="card">
             <!-- <img src="..." class="card-img-top" alt="..."> -->
