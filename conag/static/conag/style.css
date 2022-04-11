@@ -1,0 +1,19 @@
+.article_link {
+  color: #21252d;
+}
+
+.card-footer__time {
+  color: #5a5a5a;
+}
+
+.card-footer__tag {
+  color: #387b12;
+}
+
+.mr-2 {
+  margin-right: 10px;
+}
+
+.container {
+  margin-top: 100px;
+}

@@ -4,41 +4,27 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
       {% for article in articles %}
         <div class="col">
-          <div class="card">
-            <!-- <img src="..." class="card-img-top" alt="..."> -->
-            <div class="card-body">
-              <h5 class="card-title">{{ article.title }}</h5>
-              <p class="card-text">{{ article.summary }}</p>
-            </div>
-            {% if article.time or article.tag %}
-              <div
-                class="card-footer"
-                style="display: flex; justify-content: space-between"
-              >
-                <small style="color: #5a5a5a">{{ article.time }}</small>
-                <small style="color: #387b12">{{ article.tag }}</small>
+          <a href="{{ article.link }}" class="text-decoration-none article_link">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ article.title }}</h5>
+                <p class="card-text">{{ article.summary }}</p>
               </div>
-            {% endif %}
-          </div>
-        </div>
-        <!-- <a
-            href="#"
-            class="list-group-item list-group-item-action"
-            aria-current="true"
-          >
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ item.title }}</h5>
-              <small style="color: #5a5a5a;">{{ item.time }}</small>
+              {% if article.time or article.tag %}
+                <div class="card-footer d-flex justify-content-between">
+                  <small class="card-footer__time">{{ article.time }}</small>
+                  <small class="card-footer__tag">{{ article.tag }}</small>
+                </div>
+              {% endif %}
             </div>
-            <p class="mb-1">{{ item.summary }}</p>
-            <small style="color: #387b12;">{{ item.tag }}</small>
-          </a> -->
+          </a>
+        </div>
       {% endfor %}
     </div>
   {% else %}
-    <p style="text-align: center">No articles found</p>
+    <p class="text-center">No articles found</p>
   {% endif %}
-  <nav aria-label="Page navigation">
+  <nav aria-label="Page navigation" class="mt-3">
     <ul class="pagination justify-content-center">
       {% if page_obj.has_previous %}
         <li class="page-item">

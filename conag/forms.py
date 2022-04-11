@@ -15,7 +15,8 @@ class SearchForm(forms.Form):
                 'title': '',
                 'summary': '',
                 'tag': '',
-                'time': ''
+                'time': '',
+                'link': ''
             }
 
             article_title_tag = None
@@ -30,9 +31,10 @@ class SearchForm(forms.Form):
                     'div > div:last-of-type > div > dl > div:nth-of-type(2) > dd')
                 article_time_tag = tag.select_one(
                     'div > div:last-of-type > div > dl > div:first-of-type > dd > span > span:nth-of-type(2)')
+                article.update(link=f"https://www.bbc.com{article_title_tag.get('href')}")
             elif source == 'cnn':
-                article_title_tag = tag.select_one(
-                    'article span:first-of-type')
+                article_title_tag = tag.select_one('article a')
+                article.update(link=f"https://edition.cnn.com{article_title_tag.get('href')}")
 
             if article_title_tag is not None:
                 if ((self.cleaned_data.get('query') in article_title_tag.get_text())):

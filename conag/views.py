@@ -1,5 +1,5 @@
+from datetime import datetime
 from typing import Any, Dict
-from django import http
 from django.shortcuts import render
 from django.core.paginator import InvalidPage
 import requests
@@ -41,6 +41,10 @@ class BbcView(ListView):
             del sport_news_html_tags[-25:]
 
             articles = form.search(sport_news_html_tags, 'bbc')
+
+            if 'query' in self.request.GET:
+                self.__log(form.cleaned_data.get('query'))
+
             return articles
 
         return []
@@ -84,6 +88,11 @@ class BbcView(ListView):
         response = requests.get(html_document)
         return BeautifulSoup(response.text, parser)
 
+    def __log(self, message):
+        with open('./logs.txt', 'a') as file:
+            file.write(
+                f"[{datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}] {message}\n")
+
 
 class CnnView(ListView):
     template_name = 'conag/index.html'
@@ -98,28 +107,16 @@ class CnnView(ListView):
         if form.is_valid():
             service = Service(
                 executable_path=ChromeDriverManager().install())
-            # chrome_options = webdriver.ChromeOptions()
-            # # chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
-            # chrome_options.add_argument('--headless')
-            # chrome_options.add_argument('--disable-gpu')
-            # chrome_options.add_argument('--no-sandbox')
-            # chrome_options.add_argument('--disable-dev-shm-usage')
-
             browser = webdriver.Chrome(service=service)
-
-            # browser.set_window_size(950, 800)
-
             browser.get("https://edition.cnn.com/health")
             html = browser.page_source
+
             soup = BeautifulSoup(html, 'lxml')
             tags = soup.find(
                 'h2', string='Latest').find_next_siblings('li')
 
             articles = form.search(tags, 'cnn')
             return articles
-
-            # browser.close()
-            # driver.quit()
 
         return []
 
