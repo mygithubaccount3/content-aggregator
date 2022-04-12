@@ -1,4 +1,4 @@
-.article_link {
+.article-link {
   color: #21252d;
 }
 
@@ -16,4 +16,8 @@
 
 .container {
   margin-top: 100px;
+}
+
+.search-field {
+  width: 44%;
 }

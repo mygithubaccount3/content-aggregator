@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
+from decouple import config
 from .forms import SearchForm
 
 
@@ -36,7 +37,7 @@ class BbcView(ListView):
         form = self.form_class(self.request.GET)
 
         if form.is_valid():
-            soup = self.__get_bs4_instance('https://bbc.com/sport', 'lxml')
+            soup = self.__get_bs4_instance(f'{config("BBC_WEBSITE")}/sport', 'lxml')
             sport_news_html_tags = soup.select('ul > li > div > div > div')
             del sport_news_html_tags[-25:]
 
@@ -108,7 +109,7 @@ class CnnView(ListView):
             service = Service(
                 executable_path=ChromeDriverManager().install())
             browser = webdriver.Chrome(service=service)
-            browser.get("https://edition.cnn.com/health")
+            browser.get(f"{config('CNN_WEBSITE')}/health")
             html = browser.page_source
 
             soup = BeautifulSoup(html, 'lxml')

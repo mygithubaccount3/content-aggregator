@@ -1,9 +1,10 @@
 from django import forms
+from decouple import config
 
 
 class SearchForm(forms.Form):
     query = forms.CharField(label='', max_length=100, required=False, error_messages={'max_length': 'Max query length: 100'},
-                            widget=forms.TextInput(attrs={'class': 'form-control me-2', 'type': 'search', 'placeholder': 'Search', 'aria-label': 'Search', 'style': 'width: 44%'}))
+                            widget=forms.TextInput(attrs={'class': 'form-control me-2 search-field', 'type': 'search', 'placeholder': 'Search', 'aria-label': 'Search'}))
 
     page = forms.IntegerField(max_value=50, min_value=1, required=False)
 
@@ -31,10 +32,10 @@ class SearchForm(forms.Form):
                     'div > div:last-of-type > div > dl > div:nth-of-type(2) > dd')
                 article_time_tag = tag.select_one(
                     'div > div:last-of-type > div > dl > div:first-of-type > dd > span > span:nth-of-type(2)')
-                article.update(link=f"https://www.bbc.com{article_title_tag.get('href')}")
+                article.update(link=f"{config('BBC_WEBSITE') + article_title_tag.get('href')}")
             elif source == 'cnn':
                 article_title_tag = tag.select_one('article a')
-                article.update(link=f"https://edition.cnn.com{article_title_tag.get('href')}")
+                article.update(link=f"{config('CNN_WEBSITE') + article_title_tag.get('href')}")
 
             if article_title_tag is not None:
                 if ((self.cleaned_data.get('query') in article_title_tag.get_text())):
